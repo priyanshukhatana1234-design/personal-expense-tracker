@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personal Expense Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Expense Tracker</h1>
+    <div class="month-nav" role="group" aria-label="Choose month">
+      <button type="button" id="prevMonth" aria-label="Previous month">&lsaquo;</button>
+      <input type="month" id="month" aria-label="Month" pattern="[0-9]{4}-[0-9]{2}" required>
+      <button type="button" id="nextMonth" aria-label="Next month">&rsaquo;</button>
+    </div>
+    <button type="button" id="addBtn" class="btn primary">Add transaction</button>
+  </header>
+
+  <main>
+    <section class="overview" aria-labelledby="spentLabel">
+      <p class="label" id="spentLabel">Spent in <span id="monthName"></span></p>
+      <p class="spent" id="spent">&#8377;0</p>
+      <p class="budget-line"><span id="budgetStatus"></span> <button type="button" id="budgetBtn" class="link">Set budget</button></p>
+
+      <div class="bar" id="bar" role="img" aria-label="Spending by category"></div>
+      <ul class="legend" id="legend"></ul>
+
+      <dl class="figures">
+        <div><dt>Income</dt><dd id="income" class="pos">&#8377;0</dd></div>
+        <div><dt>Left after spending</dt><dd id="balance">&#8377;0</dd></div>
+      </dl>
+    </section>
+
+    <section class="ledger" aria-labelledby="ledgerTitle">
+      <div class="ledger-head">
+        <h2 id="ledgerTitle">Transactions</h2>
+        <div class="tools">
+          <div class="seg" role="group" aria-label="Filter by type">
+            <button type="button" data-filter="ALL" aria-pressed="true">All</button>
+            <button type="button" data-filter="EXPENSE" aria-pressed="false">Spent</button>
+            <button type="button" data-filter="INCOME" aria-pressed="false">Income</button>
+          </div>
+          <input type="search" id="search" placeholder="Search title, category or note" aria-label="Search transactions">
+          <a id="exportLink" class="btn" href="/api/export" download>Export CSV</a>
+        </div>
+      </div>
+      <ul class="rows" id="rows"></ul>
+      <div class="empty" id="empty" hidden>
+        <p id="emptyText"></p>
+        <button type="button" class="btn primary" id="emptyAdd">Add transaction</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="txDialog" aria-labelledby="txTitle">
+    <form id="txForm" novalidate>
+      <h2 id="txTitle">Add transaction</h2>
+      <div class="seg wide" role="radiogroup" aria-label="Type">
+        <label><input type="radio" name="type" value="EXPENSE" checked> Spent</label>
+        <label><input type="radio" name="type" value="INCOME"> Income</label>
+      </div>
+      <label class="field">Title
+        <input name="title" maxlength="80" required autocomplete="off" placeholder="Lunch at canteen">
+      </label>
+      <div class="two">
+        <label class="field">Amount (&#8377;)
+          <input name="amount" type="number" inputmode="decimal" min="0.01" step="0.01" required placeholder="250">
+        </label>
+        <label class="field">Date
+          <input name="date" type="date" required>
+        </label>
+      </div>
+      <label class="field">Category
+        <input name="category" list="categoryList" maxlength="30" required autocomplete="off" placeholder="Food">
+        <datalist id="categoryList"></datalist>
+      </label>
+      <label class="field">Note (optional)
+        <input name="note" maxlength="200" autocomplete="off">
+      </label>
+      <p class="error" id="formError" role="alert"></p>
+      <div class="actions">
+        <button type="button" class="btn" id="cancelTx">Cancel</button>
+        <button type="submit" class="btn primary" id="saveTx">Save transaction</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="budgetDialog" aria-labelledby="budgetTitle">
+    <form id="budgetForm" novalidate>
+      <h2 id="budgetTitle">Monthly budget</h2>
+      <p class="hint">The bar above compares each month's spending with this amount. Enter 0 to remove it.</p>
+      <label class="field">Budget (&#8377;)
+        <input name="budget" type="number" inputmode="decimal" min="0" step="1" required>
+      </label>
+      <p class="error" id="budgetError" role="alert"></p>
+      <div class="actions">
+        <button type="button" class="btn" id="cancelBudget">Cancel</button>
+        <button type="submit" class="btn primary">Save budget</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
